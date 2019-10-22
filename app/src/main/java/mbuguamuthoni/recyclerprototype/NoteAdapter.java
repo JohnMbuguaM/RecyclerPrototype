@@ -32,10 +32,16 @@ public class NoteAdapter extends FirestoreRecyclerAdapter <Note, NoteAdapter.Not
 //        holder.textViewTime.setText(Date);
 
 
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-        String currentDate = format.format(calendar.getTime());
-        holder.textViewTime.setText(currentDate);
+
+        SimpleDateFormat format = new SimpleDateFormat("h:mm a");
+        String currentDate = format.format(model.getTimestamp().getTime());
+            try {
+                holder.textViewTime.setText(currentDate);
+            } catch (Exception e) {
+                System.err.println(e);
+            }
+
+
 
 
 

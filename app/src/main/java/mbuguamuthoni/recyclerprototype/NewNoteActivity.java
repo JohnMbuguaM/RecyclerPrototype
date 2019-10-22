@@ -1,5 +1,6 @@
 package mbuguamuthoni.recyclerprototype;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,13 +10,14 @@ import android.widget.Toast;
 
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-
+import com.google.firebase.firestore.ServerTimestamp;
 import java.util.Date;
 import java.util.HashMap;
 
 public class NewNoteActivity extends AppCompatActivity {
     private EditText edNo_plate, edNick_name;
     Button button_save, button_cancel;
+    private @ServerTimestamp Date timestamp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +57,11 @@ public class NewNoteActivity extends AppCompatActivity {
         }
 
         CollectionReference TuktukRef = FirebaseFirestore.getInstance().collection("TuktukData");
-        TuktukRef.add(new Note(no_plate, nickName));
+
+        TuktukRef.add(new Note(no_plate, nickName, timestamp));
 
         Toast.makeText(this, "The Tuktuk has been added to the queue", Toast.LENGTH_SHORT).show();
-        finish();
+        startActivity(new Intent(NewNoteActivity.this, MainActivity.class));
 
 
 

@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpRecyclerView() {
-        Query query = tuktukRef.orderBy("number", Query.Direction.ASCENDING);
+        Query query = tuktukRef.orderBy("timestamp", Query.Direction.ASCENDING);
 
         FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
                 .setQuery(query, Note.class)

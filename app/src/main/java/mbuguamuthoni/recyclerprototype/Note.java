@@ -1,13 +1,20 @@
 package mbuguamuthoni.recyclerprototype;
 
 
+import com.google.firebase.firestore.IgnoreExtraProperties;
+import com.google.firebase.firestore.ServerTimestamp;
+
+import java.util.Date;
+
+
 import java.util.Date;
 
 
 public class Note {
     private String no_plate, nickName;
-    private int number;
-    public Date timestamp;
+//    private int number;
+    private @ServerTimestamp Date timestamp;
+
 
 
     public Note() {
@@ -15,10 +22,13 @@ public class Note {
     }
 
 
-    public Note(String nickName, String no_plate) {
-        this.number = number;
+    public Note(String nickName, String no_plate, Date timestamp ) {
+//        this.number = number;
         this.no_plate = no_plate;
         this.nickName = nickName;
+        this.timestamp = timestamp;
+
+
 
 
 
@@ -47,9 +57,9 @@ public class Note {
 //        return time;
 //    }
 
-    public int getNumber() {
-        return number;
-    }
+//   public int getNumber() {
+//        return number;
+//    }
 
 
 
