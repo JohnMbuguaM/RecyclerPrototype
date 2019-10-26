@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.Exclude;
+import com.google.firebase.firestore.ServerTimestamp;
 import com.google.firestore.v1.DocumentTransform;
 
 import java.text.DateFormat;
@@ -18,7 +19,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class NoteAdapter extends FirestoreRecyclerAdapter <Note, NoteAdapter.NoteHolder> {
-
+    @ServerTimestamp Date timestamp;
 
     public NoteAdapter(@NonNull FirestoreRecyclerOptions<Note> options) {
         super(options);
@@ -33,13 +34,30 @@ public class NoteAdapter extends FirestoreRecyclerAdapter <Note, NoteAdapter.Not
 
 
 
-        SimpleDateFormat format = new SimpleDateFormat("h:mm a");
-        String currentDate = format.format(model.getTimestamp().getTime());
+
+
+            SimpleDateFormat format = new SimpleDateFormat("h:mm a");
+        if (timestamp != null) {
+
+            String currentDate = format.format(model.getTimestamp().getTime());
+            holder.textViewTime.setText(currentDate);
+
+
+        } else {
             try {
+                String currentDate = format.format(model.getTimestamp().getTime());
                 holder.textViewTime.setText(currentDate);
             } catch (Exception e) {
-                System.err.println(e);
+                e.printStackTrace();
             }
+             }
+
+
+
+
+
+
+
 
 
 
@@ -53,6 +71,10 @@ public class NoteAdapter extends FirestoreRecyclerAdapter <Note, NoteAdapter.Not
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.note_item,
                 parent, false);
                 return new NoteHolder(v);
+    }
+
+    public void deleteItem(int position) {
+        getSnapshots().getSnapshot(position).getReference().delete();
     }
 
     class NoteHolder extends RecyclerView.ViewHolder {

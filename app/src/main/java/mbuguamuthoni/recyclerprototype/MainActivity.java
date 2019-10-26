@@ -1,12 +1,19 @@
 package mbuguamuthoni.recyclerprototype;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
+import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.CollectionReference;
@@ -14,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 public class MainActivity extends AppCompatActivity {
+    SwipeRefreshLayout swipeRefreshLayout;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference tuktukRef = db.collection("TuktukData");
@@ -24,6 +32,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        swipeRefreshLayout = findViewById(R.id.refresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Refresh();
+
+
+
+                swipeRefreshLayout.setRefreshing(false);
+
+
+            }
+        });
 
         setUpRecyclerView();
 
@@ -36,7 +59,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+
+
     }
+
 
     private void setUpRecyclerView() {
         Query query = tuktukRef.orderBy("timestamp", Query.Direction.ASCENDING);
@@ -51,6 +77,45 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder viewHolder1) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull final RecyclerView.ViewHolder viewHolder, int i) {
+
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+                mBuilder.setIcon(android.R.drawable.stat_sys_warning);
+                mBuilder.setTitle("Please Confirm");
+                mBuilder.setCancelable(false);
+                mBuilder.setMessage("Are you sure you want to Remove the Tuktuk from the line?");
+                mBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        adapter.deleteItem(viewHolder.getAdapterPosition());
+                        Refresh();
+                        Toast.makeText(MainActivity.this, "The Tuktuk has been removed from the queue", Toast.LENGTH_LONG).show();
+                        dialog.dismiss();
+
+
+                    }
+                });
+                mBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Refresh();
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog alertDialog = mBuilder.create();
+                alertDialog.show();
+
+
+            }
+        }).attachToRecyclerView(recyclerView );
     }
 
     @Override
@@ -63,6 +128,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         adapter.stopListening();
+    }
+    public void Refresh() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
 

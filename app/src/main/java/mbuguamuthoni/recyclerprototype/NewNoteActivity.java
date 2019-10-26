@@ -38,6 +38,12 @@ public class NewNoteActivity extends AppCompatActivity {
                 saveNotes();
             }
         });
+        button_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
 
 
@@ -58,10 +64,10 @@ public class NewNoteActivity extends AppCompatActivity {
 
         CollectionReference TuktukRef = FirebaseFirestore.getInstance().collection("TuktukData");
 
-        TuktukRef.add(new Note(no_plate, nickName, timestamp));
+        TuktukRef.add(new Note(nickName, no_plate,timestamp));
 
         Toast.makeText(this, "The Tuktuk has been added to the queue", Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(NewNoteActivity.this, MainActivity.class));
+        finish();
 
 
 
