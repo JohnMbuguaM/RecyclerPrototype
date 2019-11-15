@@ -4,7 +4,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +14,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -32,6 +35,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav.setOnNavigationItemSelectedListener(navLister);
+
+
+
+
 
 
         swipeRefreshLayout = findViewById(R.id.refresh);
@@ -55,13 +64,40 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, NewNoteActivity.class));
+
             }
+
         });
 
 
 
 
+
+
     }
+    private BottomNavigationView.OnNavigationItemSelectedListener navLister = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+            Fragment selectedFragment = null;
+            switch (menuItem.getItemId()) {
+                case R.id.nav_West:
+                    selectedFragment= new KiwanjaFragment();
+                    break;
+                case R.id.nav_Kiwanja:
+                    selectedFragment= new KiwanjaFragment();
+                    break;
+                case R.id.nav_bipass:
+                    selectedFragment= new BiPassFragment();
+                    break;
+
+            }
+
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                    selectedFragment).commit();
+
+            return true;
+        }
+    };
 
 
     private void setUpRecyclerView() {
@@ -130,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
         adapter.stopListening();
     }
     public void Refresh() {
+        finish();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
